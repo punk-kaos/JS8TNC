@@ -1,3 +1,4 @@
+#!/usr/local/bin/python2
 import socket
 import time
 import json
@@ -33,5 +34,5 @@ while True:
    print kiss_in.split(':')[1]
    js8string = "@APRSIS CMD " + kiss_in.replace("\\","/").decode("utf8","ignore").split(':',1)[1]
    jsonout= "{\"params\": {\"_ID\": "+str(int(time.time()*1000))+"}, \"type\": \"TX.SEND_MESSAGE\", \"value\": \"" + js8string.rstrip() + "\"}"
-   print jsonout
+   print (jsonout)
    sock.sendto(jsonout, js8sock)
