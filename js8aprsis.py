@@ -40,7 +40,7 @@ def callback(x):
   json_object = json.loads(rec)
   if (str(json_object).find(targetcall) !=-1): 
       print("FOUND CALL! WOO!")
-      js8string = targetcall + " MSG" + sendmsg
+      js8string = targetcall + " MSG FROM APRS:" + sendmsg
       print("Final out:" + js8string.rstrip())
       jsonout= "{\"params\": {\"_ID\": "+str(int(time.time()*1000))+"}, \"type\": \"TX.SEND_MESSAGE\", \"value\": \"" + js8string.rstrip() + "\"}"
       print("Jsonout:" + jsonout)
