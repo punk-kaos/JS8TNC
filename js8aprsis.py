@@ -7,9 +7,22 @@ import json
 import sys
 
 #config goes here
-aprs_pass = "17574"
+#aprs_pass = "17574"
 js8port = 2242
 
+def getPass(callsign):
+
+        basecall = callsign.upper().split('-')[0] + '\0'
+        result = 0x73e2
+        
+        c = 0
+        while (c+1 < len(basecall)):
+                result ^= ord(basecall[c]) << 8
+                result ^= ord(basecall[c+1])
+                c += 2
+        
+        result &= 0x7fff
+        return result
 
 sock = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
 sock.bind(("",js8port))
@@ -57,10 +70,12 @@ jsonout= "{\"params\": {\"_ID\": "+str(int(time.time()*1000))+"}, \"type\": \"ST
 sock.sendto(bytes(jsonout,"utf8"), js8sock)
 rec = sock.recv(1024)
 json_object = json.loads(rec)
-print ("foo:"+ json_object['value'])
+print ("Callsign:"+ json_object['value'])
 callsign=json_object['value']
 
 print("Connecting to APRS-IS...")
+aprs_prepass = getPass(callsign)
+aprs_pass = str(aprs_prepass)
 aprs = aprs.TCP(bytes(callsign, 'utf8'),aprs_pass,False,"d/JS8*")
 aprs.start()
 aprs.receive(callback=callback)
