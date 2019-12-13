@@ -29,7 +29,7 @@ sock.bind(("",js8port))
 def callback(x):
   print(x)
   try:
-   fromcall = str(x).split(":")[2]
+   fromcall = str(x).split(">")[0]
   except: return
   try:
    targetcall = str(x).split(":")[3]
@@ -48,6 +48,7 @@ def callback(x):
 #  print("pingtest:" + pingtest)
   if (pingtest.find("PING") != -1): 
       print("PING!!")
+      sock.sendto(bytes(jsonout,"utf8"), js8sock)
       rec = sock.recv(1024)
   json_object = json.loads(rec)
   if (str(json_object).find(targetcall) !=-1): 
@@ -57,7 +58,7 @@ def callback(x):
       jsonout= "{\"params\": {\"_ID\": "+str(int(time.time()*1000))+"}, \"type\": \"TX.SEND_MESSAGE\", \"value\": \"" + js8string.rstrip() + "\"}"
       print("Jsonout:" + jsonout)
       print("Sending to JS8!")
-      sock.sendto(bytes(jsonout,"utf8"), js8sock)
+#      sock.sendto(bytes(jsonout,"utf8"), js8sock)
   #print("rec:" + str(json_object))  
 
 print("APRS-IS to JS8 Gateway. V0.1")
