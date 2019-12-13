@@ -7,7 +7,6 @@ import json
 import sys
 
 #config goes here
-#aprs_pass = "17574"
 js8port = 2242
 
 def getPass(callsign):
@@ -53,7 +52,7 @@ def callback(x):
   json_object = json.loads(rec)
   if (str(json_object).find(targetcall) !=-1): 
       print("FOUND CALL! WOO!")
-      js8string = targetcall + " MSG FROM " + fromcall +" via APRS:" + sendmsg
+      js8string = targetcall + " MSG FROM " + fromcall +"via APRS:" + sendmsg
       print("Final out:" + js8string.rstrip())
       jsonout= "{\"params\": {\"_ID\": "+str(int(time.time()*1000))+"}, \"type\": \"TX.SEND_MESSAGE\", \"value\": \"" + js8string.rstrip() + "\"}"
       print("Jsonout:" + jsonout)
