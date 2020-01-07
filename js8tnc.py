@@ -33,4 +33,4 @@ while True:
    js8string = "@APRSIS CMD " + kiss_in.decode("utf8","ignore").replace("\\","/").split(':',1)[1]
    jsonout= "{\"params\": {\"_ID\": "+str(int(time.time()*1000))+"}, \"type\": \"TX.SEND_MESSAGE\", \"value\": \"" + js8string.rstrip() + "\"}"
    print (jsonout)
-   sock.sendto(jsonout, js8sock)
+   sock.sendto(bytes(jsonout,"utf8"), js8sock)
