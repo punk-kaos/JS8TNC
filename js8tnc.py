@@ -3,7 +3,7 @@ import socket
 import time
 import json
 
-port = 2245
+port = 2242
 kiss_port = 8001
 
 kiss = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
@@ -29,8 +29,8 @@ while True:
    kiss_in = conn.recv(1024)
    if not len(kiss_in) >0: break
    print (kiss_in.decode("utf8","ignore"))
-   print (kiss_in.split(':')[1])
-   js8string = "@APRSIS CMD " + kiss_in.replace("\\","/").decode("utf8","ignore").split(':',1)[1]
+   print (kiss_in.decode("utf8","ignore").split(':')[1])
+   js8string = "@APRSIS CMD " + kiss_in.decode("utf8","ignore").replace("\\","/").split(':',1)[1]
    jsonout= "{\"params\": {\"_ID\": "+str(int(time.time()*1000))+"}, \"type\": \"TX.SEND_MESSAGE\", \"value\": \"" + js8string.rstrip() + "\"}"
    print (jsonout)
    sock.sendto(jsonout, js8sock)
