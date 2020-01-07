@@ -60,7 +60,8 @@ def callback(x):
       print("Sending to JS8!")
       sock.sendto(bytes(jsonout,"utf8"), js8sock)
   else:
-     frame = callsign +'::'+fromcall.ljust(9, ' ')+':JS8 Callsign '+ targetcall + ' not heard.'
+     frame = callsign +'>APRS::'+fromcall.ljust(9, ' ')+':JS8 Callsign '+targetcall+' not heard.'
+     #frame = "KI7WKZ>APRS:>Hello World!"
      aprs.send(frame)
 
 print("APRS-IS to JS8 Gateway. V0.1")
