@@ -4,12 +4,11 @@ import time
 import json
 
 port = 2242
-js8client="192.168.1.42"
 kiss_port = 8001
 
 kiss = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 sock = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
-#sock.connect((js8client, port))
+sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 sock.bind(("",port))
 print "JS8Call TNC V0.1"
 print "Waiting for JS8 to connect..."
