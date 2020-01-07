@@ -58,7 +58,7 @@ def callback(x):
       jsonout= "{\"params\": {\"_ID\": "+str(int(time.time()*1000))+"}, \"type\": \"TX.SEND_MESSAGE\", \"value\": \"" + js8string.rstrip() + "\"}"
       print("Jsonout:" + jsonout)
       print("Sending to JS8!")
-#      sock.sendto(bytes(jsonout,"utf8"), js8sock)
+      sock.sendto(bytes(jsonout,"utf8"), js8sock)
   #print("rec:" + str(json_object))  
 
 print("APRS-IS to JS8 Gateway. V0.1")
