@@ -26,8 +26,50 @@ def getPass(callsign):
 sock = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
 sock.bind(("",js8port))
 
+def eatping(x):
+  pingtest=str(x)
+  while (pingtest.find("PING") != -1):
+   print("eating ping: PING!!")
+   x = sock.recv(1024)
+   pingtest = str(x)
+  return x
+
+def getmessageoftype(x,rec):
+  print("In getmessageoftype(x,rec)")
+  msgtype=str(x)
+  print("Message type:"+msgtype)
+  packet=str(rec)
+  print(packet)
+  while (msgtype in packet != TRUE):
+    print ("Looking for type:" + msgtype)
+    print(packet)
+    rec = sock.recv(1024)
+    packet=str(rec)
+  return rec
+
 def callback(x):
   print(x)
+
+  if (str(x).split(":")[3] == "??"):
+    print("Return list:")
+    jsonout= "{\"params\": {\"_ID\": "+str(int(time.time()*1000))+"}, \"type\": \"RX.GET_CALL_ACTIVITY\", \"value\": \"\"}"
+    sock.sendto(bytes(jsonout,"utf8"), js8sock)
+    rec = sock.recv(1024)
+    print("Call getmessageoftype(x,rec)")
+    rec=getmessageoftype("GET_CALL_ACTIVITY",rec)
+    json_object = json.loads(rec)
+    print(rec)
+    calllist=""
+    for params in json_object['params']:
+      calllist+=params + " "
+      print (params)
+    print("after call list build")
+    print (calllist)
+    fromcall = str(x).split(">")[0]
+    frame = callsign +'>APRS::'+fromcall.ljust(9, ' ')+':heard:' + calllist
+    aprs.send(bytes(frame,"utf8"))
+    return
+
   try:
    fromcall = str(x).split(">")[0]
   except: return
@@ -37,10 +79,10 @@ def callback(x):
   try:
    sendmsg = str(x).split(":")[4]
   except: return
-
   print("From Call:" + fromcall)
   print("Target callsign:" + targetcall)
   print("Outgoing message:" + sendmsg)
+
   jsonout= "{\"params\": {\"_ID\": "+str(int(time.time()*1000))+"}, \"type\": \"RX.GET_CALL_ACTIVITY\", \"value\": \"\"}"
   sock.sendto(bytes(jsonout,"utf8"), js8sock)
   rec = sock.recv(1024)
@@ -62,7 +104,7 @@ def callback(x):
   else:
      frame = callsign +'>APRS::'+fromcall.ljust(9, ' ')+':JS8 Callsign '+targetcall+' not heard.'
      #frame = "KI7WKZ>APRS:>Hello World!"
-     aprs.send(frame)
+     aprs.send(bytes(frame,"utf8"))
 
 print("APRS-IS to JS8 Gateway. V0.1")
 print("Waiting for JS8 to connect...")
