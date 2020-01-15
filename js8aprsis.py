@@ -65,6 +65,7 @@ def callback(x):
       calllist+=params + " "
       print (params)
     print("after call list build")
+    calllist=calllist.replace("_ID","")
     print (calllist)
     fromcall = str(x).split(">")[0]
     frame = callsign +'>APRS::'+fromcall.ljust(9, ' ')+':heard:' + calllist
