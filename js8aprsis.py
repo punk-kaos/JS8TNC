@@ -40,7 +40,7 @@ def getmessageoftype(x,rec):
   print("Message type:"+msgtype)
   packet=str(rec)
   print(packet)
-  while (msgtype in packet != TRUE):
+  while (packet.find(msgtype) == -1):
     print ("Looking for type:" + msgtype)
     print(packet)
     rec = sock.recv(1024)
@@ -56,8 +56,9 @@ def callback(x):
     sock.sendto(bytes(jsonout,"utf8"), js8sock)
     rec = sock.recv(1024)
     print("Call getmessageoftype(x,rec)")
-    rec=getmessageoftype("GET_CALL_ACTIVITY",rec)
+    rec=getmessageoftype("RX.CALL_ACTIVITY",rec)
     json_object = json.loads(rec)
+    print("Out of getmessageoftype")
     print(rec)
     calllist=""
     for params in json_object['params']:
@@ -86,12 +87,7 @@ def callback(x):
   jsonout= "{\"params\": {\"_ID\": "+str(int(time.time()*1000))+"}, \"type\": \"RX.GET_CALL_ACTIVITY\", \"value\": \"\"}"
   sock.sendto(bytes(jsonout,"utf8"), js8sock)
   rec = sock.recv(1024)
-  pingtest = str(rec)
-#  print("pingtest:" + pingtest)
-  if (pingtest.find("PING") != -1): 
-      print("PING!!")
-      sock.sendto(bytes(jsonout,"utf8"), js8sock)
-      rec = sock.recv(1024)
+  rec=getmessageoftype("RX.CALL_ACTIVITY",rec)
   json_object = json.loads(rec)
   if (str(json_object).find(targetcall) !=-1): 
       print("FOUND CALL! WOO!")
