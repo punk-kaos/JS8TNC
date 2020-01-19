@@ -6,3 +6,5 @@ js8tnc.py will listen for a KISS client to connect to it, then act as an interfa
 
 js8aprsis.py will connect to APRS-IS and listen for messages to your callsign in the following format "JS8USER: message", it will then query JS8 to see if it hears the requested
              user and if so transmit the message to the user via JS8. 
+You can also send your station "??" and it will return the stations it hears on JS8 to you via APRS. 
+
