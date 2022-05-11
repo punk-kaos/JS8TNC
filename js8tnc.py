@@ -29,12 +29,14 @@ while True:
    kiss_in = conn.recv(1024)
    if not len(kiss_in) >0: break
    print (kiss_in.decode("utf8","ignore"))
+
    try:
-     print (kiss_in.decode("utf8","ignore").split(':')[1])
+     print (kiss_in.decode("utf8","ignore").split('bbnc')[1])
    except:
      print ("Error decoding frame.")
      continue  
-   js8string = "@APRSIS CMD " + kiss_in.decode("utf8","ignore").replace("\\","/").split(':',1)[1]
+   
+   js8string = "@APRSIS CMD " + kiss_in.decode("utf8","ignore").split('bbnc')[1]
    jsonout= "{\"params\": {\"_ID\": "+str(int(time.time()*1000))+"}, \"type\": \"TX.SEND_MESSAGE\", \"value\": \"" + js8string.rstrip() + "\"}"
    print (jsonout)
    sock.sendto(bytes(jsonout,"utf8"), js8sock)
