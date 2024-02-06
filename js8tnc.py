@@ -18,20 +18,21 @@ print("Waiting for TNC client to connect...")
 kiss_connection, kiss_address = kiss_socket.accept()
 print('TNC Client connected from:', kiss_address)
 
+s=socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+try:
+    s.connect(("127.0.0.1", 2442))
+    print("Connected to JS8...")
+except:
+    print("ERROR CONNECTING TO JS8!")
+    exit()
 
 def send_tcp(msg):
 
     msg = msg + "\n"
+    s.sendall(msg.encode())
+    print(f"Sent to JS8: {msg}")
 
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-
-        try:
-            s.connect(("127.0.0.1",2442))
-            print("Connected")
-            s.sendall(msg.encode())
-            print(f"Sent to JS8: {msg}")
-        finally:
-            s.close()
 # Main loop
 while True:
     print("KISS loop")
@@ -64,4 +65,4 @@ while True:
 # Close sockets
 kiss_connection.close()
 kiss_socket.close()
-
+s.close()
