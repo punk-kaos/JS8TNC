@@ -19,7 +19,7 @@ def getPass(callsign):
 # Configure APRS server details
 APRS_SERVER = 'rotate.aprs2.net'
 APRS_PORT = 10152
-APRS_USER = 'KI7WKZ'
+APRS_USER = 'APRS_CALLSIGN'
 APRS_PASSCODE = getPass(APRS_USER)  # Generate your passcode using getPass function
 
 # Configure JS8Call TCP server details
