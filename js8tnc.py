@@ -103,6 +103,15 @@ def js8_thread():
                 kiss_message = data
                 print("KISS message:", kiss_message)
                 send_tcp(kiss_connection, kiss_message)
+            if "@APRSGATE" in js8_message:
+                # Extract message content and send to KISS TNC
+                message=json.loads(js8_message)
+                message_body=remove_non_ascii(message['params']['TEXT'].split("CMD")[1].strip())
+                message_from=message['params']['FROM']
+                data=f"{message_body}"
+                kiss_message = data
+                print("KISS message:", kiss_message)
+                send_tcp(kiss_connection, kiss_message)
 
         except Exception as e:
             print("Error processing JS8Call message:", e)
