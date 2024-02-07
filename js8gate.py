@@ -31,7 +31,7 @@ APRS_FILTER_DESTINATION_PREFIX = 'JS8GATE'
 
 # Configure APRS path to filter
 APRS_FILTER_PATH = 'JS8GATE'
-
+APRS_FILTER_TRIGGER = 'JS8GATE'
 # Flags to enable/disable filtering for destination and path
 ENABLE_FILTERING_DESTINATION = False
 ENABLE_FILTERING_PATH = False
@@ -69,7 +69,7 @@ def main():
         def packet_handler(packet):
             if (not ENABLE_FILTERING_DESTINATION or (packet['to'].startswith(APRS_FILTER_DESTINATION_PREFIX))) \
                     and (not ENABLE_FILTERING_PATH or packet['path'][0].startswith(APRS_FILTER_PATH))\
-                    and (not ENABLE_FILTERING_MESSAGE_TRIGGER or "JS8GATE" in packet['raw']):
+                    and (not ENABLE_FILTERING_MESSAGE_TRIGGER or APRS_FILTER_TRIGGER in packet['raw']):
                 callsign = packet['from']
                 message_text = packet['raw']
                 print(f"Packet: {packet['raw']}")
