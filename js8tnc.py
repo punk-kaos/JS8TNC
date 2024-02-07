@@ -3,6 +3,7 @@ import socket
 import time
 import json
 import threading
+import re
 
 # Define ports
 kiss_port = 8001
@@ -28,25 +29,35 @@ except Exception as e:
 
 print("Connected to JS8 on port", js8_port)
 
+kiss_connection = None  # Global variable to store the KISS connection
+
+def remove_non_ascii(text):
+    return re.sub(r'[^\x00-\x7F]+', '', text)
+
 def send_tcp(socket, msg):
     msg = msg + "\n"
     socket.sendall(msg.encode())
-    print(f"Sent to JS8: {msg}")
+    print(f"SEND_TCP: {msg}")
 
 def kiss_thread():
+    global kiss_connection  # Use the global variable
+
+    # Accept KISS connection
+    print("Waiting for data from KISS...")
+    kiss_connection, kiss_address = kiss_socket.accept()
+    print('TNC Client connected from:', kiss_address)
+
     while True:
-        print("Waiting for data from KISS...")
-        kiss_connection, kiss_address = kiss_socket.accept()
-        print('TNC Client connected from:', kiss_address)
         kiss_data = kiss_connection.recv(1024)
         if not kiss_data:
+            print("Disconnected from KISS.")
             kiss_connection.close()
-            continue
+            break
 
         # Process KISS frame
         try:
             # Extract message
-            message = kiss_data.decode('utf-8', errors='ignore').split("\u0003")[1]
+            message = kiss_data.decode('utf-8', errors='ignore').split(":", 1)[1]
             print("Extracted message:", message)
 
             # Construct JSON message for JS8Call
@@ -62,11 +73,14 @@ def kiss_thread():
         except Exception as e:
             print("Error processing KISS frame:", e)
             continue
-        finally:
-            kiss_connection.close()
 
 def js8_thread():
     while True:
+        global kiss_connection  # Use the global variable
+        if kiss_connection is None:
+            time.sleep(1)  # Wait for the KISS connection to be established
+            continue
+
         print("Waiting for data from JS8...")
         js8_data = js8_socket.recv(1024)
         if not js8_data:
@@ -83,14 +97,12 @@ def js8_thread():
             if "@APRSIS" in js8_message:
                 # Extract message content and send to KISS TNC
                 message=json.loads(js8_message)
-                message_body=message['params']['TEXT'].split("CMD")[1].strip()
+                message_body=remove_non_ascii(message['params']['TEXT'].split("CMD")[1].strip())
                 message_from=message['params']['FROM']
-                kiss_message=f"{message_from}:{message_body}"
-                #print(f"KISS MESSAGE: {message_from} {message_body}")
-
-                #kiss_message = message_parts #f"\x1b\x03{message_content}\x0f"
+                data=f"{message_from}>APJ8CL:{message_body}"
+                kiss_message = data
                 print("KISS message:", kiss_message)
-                send_tcp(kiss_socket, kiss_message)
+                send_tcp(kiss_connection, kiss_message)
 
         except Exception as e:
             print("Error processing JS8Call message:", e)
