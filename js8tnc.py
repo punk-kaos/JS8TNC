@@ -8,7 +8,7 @@ import re
 # Define ports
 kiss_port = 8001
 js8_port = 2442
-send_raw_packet = True
+send_raw_packet = False
 # Create TCP socket for KISS TNC
 kiss_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 kiss_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)

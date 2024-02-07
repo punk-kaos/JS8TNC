@@ -19,7 +19,7 @@ def getPass(callsign):
 # Configure APRS server details
 APRS_SERVER = 'rotate.aprs2.net'
 APRS_PORT = 10152
-APRS_USER = 'KI7WKZ'
+APRS_USER = 'CALLSIGN_HERE'
 APRS_PASSCODE = getPass(APRS_USER)  # Generate your passcode using getPass function
 
 # Configure JS8Call TCP server details
@@ -30,7 +30,7 @@ JS8CALL_PORT = 2442
 APRS_FILTER_DESTINATION_PREFIX = 'JS8GATE'
 
 # Configure APRS path to filter
-APRS_FILTER_PATH = 'WIDE1-1'
+APRS_FILTER_PATH = 'JS8GATE'
 
 # Flags to enable/disable filtering for destination and path
 ENABLE_FILTERING_DESTINATION = False
