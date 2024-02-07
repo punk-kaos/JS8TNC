@@ -106,7 +106,7 @@ def js8_thread():
             if "@APRSGATE" in js8_message:
                 # Extract message content and send to KISS TNC
                 message=json.loads(js8_message)
-                message_body=remove_non_ascii(message['params']['TEXT'].split("CMD")[1].strip())
+                message_body=remove_non_ascii(message['params']['TEXT'].split("@APRSGATE")[1].strip())
                 message_from=message['params']['FROM']
                 data=f"{message_body}"
                 kiss_message = data
