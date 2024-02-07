@@ -19,7 +19,7 @@ def getPass(callsign):
 # Configure APRS server details
 APRS_SERVER = 'rotate.aprs2.net'
 APRS_PORT = 10152
-APRS_USER = 'CALLSIGN_HERE'
+APRS_USER = 'KI7WKZ'
 APRS_PASSCODE = getPass(APRS_USER)  # Generate your passcode using getPass function
 
 # Configure JS8Call TCP server details
@@ -34,8 +34,8 @@ APRS_FILTER_PATH = 'JS8GATE'
 
 # Flags to enable/disable filtering for destination and path
 ENABLE_FILTERING_DESTINATION = False
-ENABLE_FILTERING_PATH = True
-
+ENABLE_FILTERING_PATH = False
+ENABLE_FILTERING_MESSAGE_TRIGGER = True
 def send_to_js8call(payload):
     try:
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
@@ -68,7 +68,8 @@ def main():
 
         def packet_handler(packet):
             if (not ENABLE_FILTERING_DESTINATION or (packet['to'].startswith(APRS_FILTER_DESTINATION_PREFIX))) \
-                    and (not ENABLE_FILTERING_PATH or packet['path'][0].startswith(APRS_FILTER_PATH)):
+                    and (not ENABLE_FILTERING_PATH or packet['path'][0].startswith(APRS_FILTER_PATH))\
+                    and (not ENABLE_FILTERING_MESSAGE_TRIGGER or "JS8GATE" in packet['raw']):
                 callsign = packet['from']
                 message_text = packet['raw']
                 print(f"Packet: {packet['raw']}")
