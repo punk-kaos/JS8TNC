@@ -27,10 +27,14 @@ JS8CALL_HOST = '127.0.0.1'  # Host running JS8Call
 JS8CALL_PORT = 2442
 
 # Configure APRS destination prefix to filter
-APRS_FILTER_DESTINATION_PREFIX = 'APRS'
+APRS_FILTER_DESTINATION_PREFIX = 'JS8GATE'
 
-# Flag to enable/disable filtering
-ENABLE_FILTERING = True
+# Configure APRS path to filter
+APRS_FILTER_PATH = 'WIDE1-1'
+
+# Flags to enable/disable filtering for destination and path
+ENABLE_FILTERING_DESTINATION = False
+ENABLE_FILTERING_PATH = True
 
 def send_to_js8call(payload):
     try:
@@ -63,7 +67,8 @@ def main():
         print(f"Connected to APRS-IS server {APRS_SERVER}")
 
         def packet_handler(packet):
-            if not ENABLE_FILTERING or (packet['raw'] and packet['to'].startswith(APRS_FILTER_DESTINATION_PREFIX)):
+            if (not ENABLE_FILTERING_DESTINATION or (packet['to'].startswith(APRS_FILTER_DESTINATION_PREFIX))) \
+                    and (not ENABLE_FILTERING_PATH or packet['path'][0].startswith(APRS_FILTER_PATH)):
                 callsign = packet['from']
                 message_text = packet['raw']
                 print(f"Packet: {packet['raw']}")
@@ -77,4 +82,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

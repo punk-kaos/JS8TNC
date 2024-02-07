@@ -8,7 +8,7 @@ import re
 # Define ports
 kiss_port = 8001
 js8_port = 2442
-
+send_raw_packet = True
 # Create TCP socket for KISS TNC
 kiss_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 kiss_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -57,15 +57,26 @@ def kiss_thread():
         # Process KISS frame
         try:
             # Extract message
-            message = kiss_data.decode('utf-8', errors='ignore').split(":", 1)[1]
-            print("Extracted message:", message)
+            if send_raw_packet == False:
+                message = kiss_data.decode('utf-8', errors='ignore').split(":", 1)[1]
+                print("Extracted message:", message)
 
-            # Construct JSON message for JS8Call
-            json_message = {
-                "params": {},
-                "type": "TX.SEND_MESSAGE",
-                "value": "@APRSIS CMD " + message
-            }
+                # Construct JSON message for JS8Call
+                json_message = {
+                    "params": {},
+                    "type": "TX.SEND_MESSAGE",
+                    "value": "@APRSIS CMD " + message
+                }
+            else:
+                message = kiss_data.decode('utf-8', errors='ignore')
+                print("Extracted message:", message)
+
+                # Construct JSON message for JS8Call
+                json_message = {
+                    "params": {},
+                    "type": "TX.SEND_MESSAGE",
+                    "value": "@APRSGATE " + message
+                }
             json_string = json.dumps(json_message)
             print("JSON message:", json_string)
             send_tcp(js8_socket, json_string)
@@ -97,6 +108,7 @@ def js8_thread():
             if "@APRSIS" in js8_message:
                 # Extract message content and send to KISS TNC
                 message=json.loads(js8_message)
+
                 message_body=remove_non_ascii(message['params']['TEXT'].split("CMD")[1].strip())
                 message_from=message['params']['FROM']
                 data=f"{message_from}>APJ8CL:{message_body}"
