@@ -12,3 +12,8 @@ You can also send your station "??" and it will return the stations it hears on 
 js8gate.py will gateway packets from APRS-IS in raw format across JS8. Js8tnc.py is able to capture those packets
 and repeat them to your APRS software as if they had been received directly as a normal packet, enabling message relay
 and digipeating across JS8. It has several configurable filters to limit what it digipeats to JS8 as JS8 is very low bitrate.
+
+js8inbound.py is a one-way APRS → JS8 inbound gateway. It listens on APRS-IS for APRS messages (optionally with msgid),
+tracks JS8 “recently heard” stations over the JS8Call TCP API, and gates messages into JS8 as `<target> msg <sender>/APRS: <body>`
+only when the target was recently heard. If the JS8 side replies with ACK/RR, the script sends an APRS ack back to the original APRS sender.
+Use `--test` to send a one-shot JS8 message to your APRS login callsign for quick verification.
